@@ -1,5 +1,4 @@
 local Data = require("harpoon.data")
-local Path = require("plenary.path")
 local Config = require("harpoon.config")
 
 local M = {}
@@ -74,7 +73,10 @@ end
 ---@param name string
 ---@param contents string[]
 function M.create_file(name, contents, row, col)
-    Path:new(name):write(table.concat(contents, "\n"), "w")
+    local fd = assert(io.open(name, "w"))
+    fd:write(table.concat(contents, "\n"))
+    fd:close()
+
     local bufnr = vim.fn.bufnr(name, true)
     vim.api.nvim_set_option_value("bufhidden", "hide", {
         buf = bufnr,

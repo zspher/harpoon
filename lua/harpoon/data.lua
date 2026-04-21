@@ -1,5 +1,3 @@
-local Path = require("plenary.path")
-
 local data_path = string.format("%s/harpoon", vim.fn.stdpath("data"))
 local ensured_data_path = false
 local function ensure_data_path()
@@ -7,9 +5,8 @@ local function ensure_data_path()
         return
     end
 
-    local path = Path:new(data_path)
-    if not path:exists() then
-        path:mkdir()
+    if not vim.uv.fs_stat(data_path) then
+        vim.uv.fs_mkdir(data_path, 0755)
     end
     ensured_data_path = true
 end
@@ -32,7 +29,9 @@ end
 ---@param data any
 ---@param config HarpoonConfig
 local function write_data(data, config)
-    Path:new(fullpath(config)):write(vim.json.encode(data), "w")
+    local fd = assert(io.open(fullpath(config), "w"))
+    fd:write(vim.json.encode(data))
+    fd:close()
 end
 
 local M = {}
@@ -69,14 +68,14 @@ local function read_data(config, provided_path)
     ensure_data_path()
 
     provided_path = provided_path or fullpath(config)
-    local path = Path:new(provided_path)
-    local exists = path:exists()
 
-    if not exists then
+    if not vim.uv.fs_stat(provided_path) then
         write_data({}, config)
     end
 
-    local out_data = path:read()
+    local fd = assert(io.open(provided_path, "r"))
+    local out_data = fd:read("*a")
+    fd:close()
 
     if not out_data or out_data == "" then
         write_data({}, config)
