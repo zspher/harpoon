@@ -29,9 +29,9 @@ end
 ---@param data any
 ---@param config HarpoonConfig
 local function write_data(data, config)
-    local fd = assert(io.open(fullpath(config), "w"))
-    fd:write(vim.json.encode(data))
-    fd:close()
+    local fd = assert(vim.uv.fs_open(fullpath(config), "w", 438))
+    assert(vim.uv.fs_write(fd, vim.json.encode(data), -1))
+    assert(vim.uv.fs_close(fd))
 end
 
 local M = {}
@@ -73,9 +73,10 @@ local function read_data(config, provided_path)
         write_data({}, config)
     end
 
-    local fd = assert(io.open(provided_path, "r"))
-    local out_data = fd:read("*a")
-    fd:close()
+    local fd = assert(vim.uv.fs_open(provided_path, "r", 438))
+    local stat = assert(vim.uv.fs_fstat(fd))
+    local out_data = assert(vim.uv.fs_read(fd, stat.size, 0))
+    assert(vim.uv.fs_close(fd))
 
     if not out_data or out_data == "" then
         write_data({}, config)

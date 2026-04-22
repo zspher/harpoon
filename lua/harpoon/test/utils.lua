@@ -73,9 +73,9 @@ end
 ---@param name string
 ---@param contents string[]
 function M.create_file(name, contents, row, col)
-    local fd = assert(io.open(name, "w"))
-    fd:write(table.concat(contents, "\n"))
-    fd:close()
+    local fd = assert(vim.uv.fs_open(name, "w", 438))
+    assert(vim.uv.fs_write(fd, table.concat(contents, "\n"), -1))
+    assert(vim.uv.fs_close(fd))
 
     local bufnr = vim.fn.bufnr(name, true)
     vim.api.nvim_set_option_value("bufhidden", "hide", {
