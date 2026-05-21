@@ -37,11 +37,9 @@ tmux windows, or dream up your own custom action and execute with a single key
 * neovim 0.8.0+ required
 * install using your favorite plugin manager (i am using `packer` in this case)
 ```lua
-use "nvim-lua/plenary.nvim" -- don't forget to add this one if you don't have it yet!
 use {
     "ThePrimeagen/harpoon",
     branch = "harpoon2",
-    requires = { {"nvim-lua/plenary.nvim"} }
 }
 ```
 * install using [lazy.nvim](https://github.com/folke/lazy.nvim)
@@ -49,7 +47,6 @@ use {
 {
     "ThePrimeagen/harpoon",
     branch = "harpoon2",
-    dependencies = { "nvim-lua/plenary.nvim" }
 }
 ```
 

@@ -129,7 +129,11 @@ function Harpoon:extend(extension)
 end
 
 function Harpoon:__debug_reset()
-    package.loaded["harpoon"] = nil
+    for name, _ in pairs(package.loaded) do
+        if name:match("^harpoon") then
+            package.loaded[name] = nil
+        end
+    end
 end
 
 local the_harpoon = Harpoon:new()

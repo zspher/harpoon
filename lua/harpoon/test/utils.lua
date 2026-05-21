@@ -45,7 +45,11 @@ function M.before_each(name)
         --- we don't use the config
         Data.__dangerously_clear_data(config)
 
-        require("plenary.reload").reload_module("harpoon")
+        for p, _ in pairs(package.loaded) do
+            if p:match("^harpoon") then
+                package.loaded[p] = nil
+            end
+        end
         Data = require("harpoon.data")
         Data.test.set_fullpath(set_fullpath)
         local harpoon = require("harpoon")
