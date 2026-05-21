@@ -129,7 +129,7 @@ function Harpoon:extend(extension)
 end
 
 function Harpoon:__debug_reset()
-    require("plenary.reload").reload_module("harpoon")
+    package.loaded["harpoon"] = nil
 end
 
 local the_harpoon = Harpoon:new()
